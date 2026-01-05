@@ -1,0 +1,173 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TeamGroup {
+  id          String       @id @default(cuid())
+  title       String
+  description String
+  order       Int          @default(0)
+  members     TeamMember[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model TeamMember {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  slug      String   @unique
+  image     String
+  bio       String
+  skills    String   // JSON array of skills
+  icon      String   // Icon name from lucide-react
+  color     String   // Tailwind color class
+  linkedin  String?
+  twitter   String?
+  github    String?
+  groupId   String
+  group     TeamGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  projects  ProjectMember[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([groupId])
+  @@index([slug])
+}
+
+model Project {
+  id           String          @id @default(cuid())
+  title        String
+  slug         String          @unique
+  category     String
+  description  String
+  status       String          // "featured" | "ongoing" | "completed"
+  technologies String          // JSON array of technologies
+  image        String?
+  year         String?
+  members      ProjectMember[]
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([slug])
+  @@index([status])
+}
+
+model ProjectMember {
+  id        String      @id @default(cuid())
+  projectId String
+  project   Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  memberId  String
+  member    TeamMember  @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now())
+
+  @@unique([projectId, memberId])
+  @@index([projectId])
+  @@index([memberId])
+}
+
+model Service {
+  id        String   @id @default(cuid())
+  title     String
+  icon      String   // Icon name from lucide-react
+  items     String   // JSON array of service items
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PricingPlan {
+  id        String   @id @default(cuid())
+  price     String
+  period    String   // "month" | "year"
+  features  String   // JSON array of features
+  highlight Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Stat {
+  id        String   @id @default(cuid())
+  label     String
+  value     String
+  prefix    String?
+  suffix    String?
+  icon      String?  // Icon name from lucide-react
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  text      String
+  author    String
+  image     String?
+  company   String?
+  verified  Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AboutContent {
+  id        String   @id @default(cuid())
+  title     String?
+  content   String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Future models for scalability
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String?
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Placeholder for future chat functionality
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String?  // Can be null for anonymous users
+  message   String
+  response  String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Placeholder for future contract functionality
+model Contract {
+  id          String   @id @default(cuid())
+  clientName  String
+  clientEmail String
+  projectName String
+  status      String   // "draft" | "sent" | "signed" | "completed"
+  contractUrl String?
+  signedAt    DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

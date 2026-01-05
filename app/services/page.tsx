@@ -3,52 +3,43 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Canvas } from "@react-three/fiber";
 import Service3DIcon from "@/components/Service3DIcon";
 import TextScramble from "@/components/TextScramble";
+import { api } from "@/lib/api";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const servicesList = [
-    {
-        title: "Blockchain Solutions",
-        description: "Secure and scalable infrastructure, smart contract development, crypto wallet integration, and custom blockchain platforms.",
-        features: ["Secure and scalable infrastructure", "Smart contract development", "Crypto wallet integration", "Custom blockchain platforms"]
-    },
-    {
-        title: "AI & Machine Learning",
-        description: "Predictive analytics, NLP, custom ML model development, and AI-driven automation tools.",
-        features: ["Predictive analytics and modeling", "Natural Language Processing (NLP)", "Custom ML model development", "AI-driven automation tools"]
-    },
-    {
-        title: "Web Development",
-        description: "Responsive & mobile-first design, custom frontend & backend solutions, CMS integration, and e-commerce platform development.",
-        features: ["Responsive & mobile-first design", "Custom frontend & backend solutions", "CMS integration (WordPress, Shopify)", "E-commerce platform development"]
-    },
-    {
-        title: "DevOps & Cloud Automation",
-        description: "CI/CD pipeline setup, Infrastructure as Code, cloud cost optimization, and real-time monitoring.",
-        features: ["CI/CD pipeline setup & optimization", "Infrastructure as Code (IaC) with Terraform", "Cloud cost optimization strategies", "Real-time monitoring & alert systems"]
-    },
-    {
-        title: "Data Analysis & Extraction",
-        description: "Scalable web scraping, real-time data pipelines, data cleaning, and visual analytics dashboards.",
-        features: ["Scalable web scraping with Scrapy", "Real-time data pipelines with Python", "Data cleaning & transformation", "Visual analytics dashboards"]
-    },
-    {
-        title: "Cross-Platform App Dev",
-        description: "Flutter & React Native solutions, seamless user experience, API integration, and performance optimization.",
-        features: ["Flutter & React Native app solutions", "Seamless user experience across devices", "Third-party API integration", "Performance optimization for mobile & web"]
-    }
-];
-
 export default function ServicesPage() {
     const containerRef = useRef(null);
+    const [services, setServices] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        api.getServices()
+            .then((data) => {
+                // Parse items from JSON string to array
+                const parsedServices = data.map((service: any) => ({
+                    ...service,
+                    items: typeof service.items === 'string' 
+                        ? JSON.parse(service.items || '[]') 
+                        : (service.items || [])
+                }));
+                setServices(parsedServices);
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.error('Failed to fetch services:', error);
+                setLoading(false);
+            });
+    }, []);
 
     useGSAP(() => {
+        if (loading || services.length === 0) return;
+
         const sections = gsap.utils.toArray(".service-block");
 
         sections.forEach((section: any, i) => {
@@ -63,7 +54,7 @@ export default function ServicesPage() {
                 ease: "power3.out"
             });
         });
-    }, { scope: containerRef });
+    }, { scope: containerRef, dependencies: [loading, services] });
 
     return (
         <main ref={containerRef} className="bg-black min-h-screen text-white pt-20">
@@ -79,8 +70,21 @@ export default function ServicesPage() {
                 </p>
             </section>
 
+            {loading && (
+                <div className="text-center py-20">
+                    <div className="text-xl text-gray-400">Loading services...</div>
+                </div>
+            )}
+
+            {!loading && services.length === 0 && (
+                <div className="text-center py-20">
+                    <div className="text-xl text-gray-400">No services available</div>
+                </div>
+            )}
+
+            {!loading && services.length > 0 && (
             <div className="container mx-auto px-4 pb-32 flex flex-col gap-32">
-                {servicesList.map((service, i) => (
+                {services.map((service, i) => (
                     <div
                         key={i}
                         className={`service-block flex flex-col ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-16`}
@@ -100,15 +104,12 @@ export default function ServicesPage() {
                             <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white group cursor-default">
                                 <TextScramble text={service.title} className="hover:text-cyan-400 transition-colors" />
                             </h2>
-                            <p className="text-xl text-gray-400 mb-8 leading-relaxed">
-                                {service.description}
-                            </p>
 
                             <ul className="space-y-4">
-                                {service.features.map((feature, idx) => (
-                                    <li key={idx} className="flex items-center gap-4 text-gray-300">
+                                {service.items && service.items.map((item: string, idx: number) => (
+                                    <li key={idx} className="flex items-center gap-4 text-gray-300 text-lg">
                                         <div className={`w-2 h-2 rounded-full ${i % 2 === 0 ? 'bg-cyan-400' : 'bg-purple-400'} shadow-[0_0_10px_currentColor]`} />
-                                        {feature}
+                                        {item}
                                     </li>
                                 ))}
                             </ul>
@@ -116,6 +117,7 @@ export default function ServicesPage() {
                     </div>
                 ))}
             </div>
+            )}
 
             <Footer />
         </main>

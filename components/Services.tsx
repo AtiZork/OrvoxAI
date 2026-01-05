@@ -3,46 +3,37 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Brain, Code, Cloud, Database, Cpu, Smartphone } from "lucide-react";
+import { api } from "@/lib/api";
+
+const iconMap: Record<string, any> = {
+  Cpu: Cpu,
+  Brain: Brain,
+  Code: Code,
+  Cloud: Cloud,
+  Database: Database,
+  Smartphone: Smartphone,
+};
 
 gsap.registerPlugin(ScrollTrigger);
 
-const services = [
-    {
-        title: "Blockchain Solutions",
-        icon: <Cpu className="w-10 h-10 mb-4 text-cyan-400" />,
-        items: ["Secure infrastructure", "Smart contracts", "Crypto wallets", "Custom platforms"]
-    },
-    {
-        title: "AI & ML Solutions",
-        icon: <Brain className="w-10 h-10 mb-4 text-purple-400" />,
-        items: ["Predictive analytics", "NLP", "Custom ML models", "AI automation"]
-    },
-    {
-        title: "Web Development",
-        icon: <Code className="w-10 h-10 mb-4 text-cyan-400" />,
-        items: ["Responsive design", "Full-stack solutions", "CMS integration", "E-commerce"]
-    },
-    {
-        title: "DevOps & Cloud",
-        icon: <Cloud className="w-10 h-10 mb-4 text-purple-400" />,
-        items: ["CI/CD pipelines", "IaC (Terraform)", "Cost optimization", "Monitoring"]
-    },
-    {
-        title: "Data Analysis",
-        icon: <Database className="w-10 h-10 mb-4 text-cyan-400" />,
-        items: ["Web scraping", "Data pipelines", "Data cleaning", "Analytics dashboards"]
-    },
-    {
-        title: "App Development",
-        icon: <Smartphone className="w-10 h-10 mb-4 text-purple-400" />,
-        items: ["Flutter & React Native", "Cross-platform", "API integration", "Performance optimization"]
-    }
-];
-
 export default function Services() {
     const containerRef = useRef(null);
+    const [services, setServices] = useState<any[]>([]);
+
+    useEffect(() => {
+        api.getServices().then((data) => {
+            if (data && data.length > 0) {
+                setServices(
+                    data.map((service: any) => ({
+                        ...service,
+                        icon: iconMap[service.icon] || Code,
+                    }))
+                );
+            }
+        });
+    }, []);
 
     useGSAP(() => {
         gsap.from(".service-card", {
@@ -59,6 +50,10 @@ export default function Services() {
         });
     }, { scope: containerRef });
 
+    if (services.length === 0) {
+        return null;
+    }
+
     return (
         <section ref={containerRef} className="py-24 bg-[#050511] relative">
             <div className="container mx-auto px-4">
@@ -68,27 +63,30 @@ export default function Services() {
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {services.map((service, index) => (
-                        <div
-                            key={index}
-                            className="service-card group relative p-8 rounded-2xl bg-zinc-900/50 border border-zinc-800 hover:border-cyan-500/50 transition-colors duration-300 hover:bg-zinc-900/80 hover:shadow-2xl hover:shadow-cyan-500/10"
-                        >
-                            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
+                    {services.map((service, index) => {
+                        const IconComponent = service.icon;
+                        return (
+                            <div
+                                key={service.id || index}
+                                className="service-card group relative p-8 rounded-2xl bg-zinc-900/50 border border-zinc-800 hover:border-cyan-500/50 transition-colors duration-300 hover:bg-zinc-900/80 hover:shadow-2xl hover:shadow-cyan-500/10"
+                            >
+                                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
 
-                            <div className="relative z-10">
-                                {service.icon}
-                                <h3 className="text-2xl font-bold mb-6 text-white group-hover:text-cyan-400 transition-colors">{service.title}</h3>
-                                <ul className="space-y-2">
-                                    {service.items.map((item, i) => (
-                                        <li key={i} className="text-gray-400 flex items-center gap-2">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-zinc-600 group-hover:bg-cyan-400 transition-colors" />
-                                            {item}
-                                        </li>
-                                    ))}
-                                </ul>
+                                <div className="relative z-10">
+                                    <IconComponent className="w-10 h-10 mb-4 text-cyan-400" />
+                                    <h3 className="text-2xl font-bold mb-6 text-white group-hover:text-cyan-400 transition-colors">{service.title}</h3>
+                                    <ul className="space-y-2">
+                                        {service.items.map((item: string, i: number) => (
+                                            <li key={i} className="text-gray-400 flex items-center gap-2">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-zinc-600 group-hover:bg-cyan-400 transition-colors" />
+                                                {item}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
         </section>

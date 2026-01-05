@@ -3,36 +3,25 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Check, ArrowRight } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { api } from "@/lib/api";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const plans = [
-    {
-        price: "499",
-        period: "month",
-        features: ["Request to unlimited logo", "Request to unlimited website", "Request upto 10 team", "Request to unlimited dashboard", "24/7 dedicated support system"],
-        highlight: false
-    },
-    {
-        price: "599",
-        period: "month",
-        features: ["Request to unlimited logo", "Request to unlimited website", "Request upto 10 team", "Request to unlimited dashboard", "24/7 dedicated support system"],
-        highlight: true
-    },
-    {
-        price: "799",
-        period: "month",
-        features: ["Request to unlimited logo", "Request to unlimited website", "Request upto 10 team", "Request to unlimited dashboard", "24/7 dedicated support system"],
-        highlight: false
-    }
-];
-
 export default function PricingPage() {
     const containerRef = useRef(null);
+    const [plans, setPlans] = useState<any[]>([]);
+
+    useEffect(() => {
+        api.getPricingPlans().then((data) => {
+            if (data && data.length > 0) {
+                setPlans(data);
+            }
+        });
+    }, []);
 
     useGSAP(() => {
         const cards = gsap.utils.toArray(".pricing-card");
@@ -77,7 +66,7 @@ export default function PricingPage() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {plans.map((plan, index) => (
                             <div
-                                key={index}
+                                key={plan.id || index}
                                 className={`pricing-card relative p-8 rounded-3xl border ${plan.highlight
                                     ? "bg-zinc-900 border-cyan-500 shadow-[0_0_50px_-12px_rgba(6,182,212,0.3)]"
                                     : "bg-zinc-950 border-zinc-800 hover:border-zinc-700"
@@ -95,7 +84,7 @@ export default function PricingPage() {
                                 </div>
 
                                 <ul className="space-y-4 mb-8">
-                                    {plan.features.map((feature, i) => (
+                                    {plan.features.map((feature: string, i: number) => (
                                         <li key={i} className="flex items-center gap-3 text-gray-300">
                                             <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${plan.highlight ? "bg-cyan-500/20 text-cyan-400" : "bg-zinc-800 text-gray-400"}`}>
                                                 <Check className="w-3 h-3" />

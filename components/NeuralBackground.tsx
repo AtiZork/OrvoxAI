@@ -91,13 +91,18 @@ function NeuralNetwork() {
             if (Math.abs(node.position.y) > 10) node.velocity.y *= -1;
         });
 
-        // Update node positions
-        if (nodesRef.current) {
+        // Update node positions with NaN check
+        if (nodesRef.current && nodesRef.current.geometry.attributes.position) {
             const positions = nodesRef.current.geometry.attributes.position.array;
             nodes.forEach((node, i) => {
-                positions[i * 3] = node.position.x;
-                positions[i * 3 + 1] = node.position.y;
-                positions[i * 3 + 2] = node.position.z;
+                // Ensure no NaN values
+                const x = isNaN(node.position.x) ? 0 : node.position.x;
+                const y = isNaN(node.position.y) ? 0 : node.position.y;
+                const z = isNaN(node.position.z) ? 0 : node.position.z;
+                
+                positions[i * 3] = x;
+                positions[i * 3 + 1] = y;
+                positions[i * 3 + 2] = z;
             });
             nodesRef.current.geometry.attributes.position.needsUpdate = true;
         }
@@ -146,17 +151,20 @@ function NeuralNetwork() {
                 }
             }
 
-            const geometry = linesRef.current.geometry;
-            geometry.setAttribute(
-                'position',
-                new THREE.Float32BufferAttribute(linePositions, 3)
-            );
-            geometry.setAttribute(
-                'color',
-                new THREE.Float32BufferAttribute(lineColors, 3)
-            );
-            geometry.attributes.position.needsUpdate = true;
-            geometry.attributes.color.needsUpdate = true;
+            // Only update if we have valid line positions
+            if (linePositions.length > 0) {
+                const geometry = linesRef.current.geometry;
+                geometry.setAttribute(
+                    'position',
+                    new THREE.Float32BufferAttribute(linePositions, 3)
+                );
+                geometry.setAttribute(
+                    'color',
+                    new THREE.Float32BufferAttribute(lineColors, 3)
+                );
+                geometry.attributes.position.needsUpdate = true;
+                geometry.attributes.color.needsUpdate = true;
+            }
         }
     });
 

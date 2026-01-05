@@ -1,36 +1,205 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Orvox AI - Full Stack Application
 
-## Getting Started
+A modern, scalable full-stack application built with Next.js frontend and NestJS backend.
 
-First, run the development server:
+## Features
+
+- **Frontend**: Next.js 16 with TypeScript, Tailwind CSS, GSAP animations
+- **Backend**: NestJS with PostgreSQL database
+- **Admin Panel**: Complete admin interface for managing all content
+- **Scalable Architecture**: Ready for future features (chat, contracts, etc.)
+
+## Prerequisites
+
+- Node.js 18+ 
+- PostgreSQL database
+- npm or yarn
+
+## Setup Instructions
+
+### 1. Database Setup
+
+Create a PostgreSQL database:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+createdb orvox_db
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Or using psql:
+```sql
+CREATE DATABASE orvox_db;
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 2. Backend Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cd backend
 
-## Learn More
+# Install dependencies
+npm install
 
-To learn more about Next.js, take a look at the following resources:
+# Copy environment file
+cp .env.example .env
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Edit .env and set your DATABASE_URL:
+# DATABASE_URL="postgresql://user:password@localhost:5432/orvox_db?schema=public"
+# JWT_SECRET="your-super-secret-jwt-key"
+# PORT=3001
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Generate Prisma client
+npm run prisma:generate
 
-## Deploy on Vercel
+# Run migrations
+npm run prisma:migrate
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Seed the database
+npm run seed
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Start the backend server
+npm run start:dev
+```
+
+The backend will run on `http://localhost:3001`
+
+### 3. Frontend Setup
+
+```bash
+# From the root directory
+npm install
+
+# Create .env.local file
+echo "NEXT_PUBLIC_API_URL=http://localhost:3001" > .env.local
+
+# Start the development server
+npm run dev
+```
+
+The frontend will run on `http://localhost:3000`
+
+## Admin Panel
+
+Access the admin panel at: `http://localhost:3000/admin`
+
+**Default Credentials:**
+- Email: `admin@orvox.ai`
+- Password: `admin123`
+
+⚠️ **Important**: Change the default password after first login!
+
+## Project Structure
+
+```
+OrvoxAi/
+├── app/                    # Next.js app directory
+│   ├── admin/              # Admin panel (hidden from public)
+│   └── ...                 # Other pages
+├── backend/                # NestJS backend
+│   ├── src/
+│   │   ├── auth/           # Authentication module
+│   │   ├── admin/          # Admin module
+│   │   ├── teams/          # Teams API
+│   │   ├── projects/       # Projects API
+│   │   ├── services/       # Services API
+│   │   ├── pricing/        # Pricing API
+│   │   ├── stats/          # Stats API
+│   │   ├── testimonials/   # Testimonials API
+│   │   └── about/          # About API
+│   ├── prisma/             # Prisma schema
+│   └── uploads/            # Uploaded files
+├── components/             # React components
+├── lib/                    # Utilities and API client
+└── public/                 # Static assets
+```
+
+## API Endpoints
+
+All API endpoints are prefixed with `/api/`:
+
+- `GET /api/teams/groups` - Get all team groups
+- `GET /api/teams/members` - Get all team members
+- `GET /api/projects` - Get all projects
+- `GET /api/services` - Get all services
+- `GET /api/pricing` - Get all pricing plans
+- `GET /api/stats` - Get all stats
+- `GET /api/testimonials` - Get all testimonials
+- `GET /api/about` - Get about content
+
+Admin endpoints require JWT authentication (Bearer token).
+
+## Environment Variables
+
+### Backend (.env)
+```
+DATABASE_URL="postgresql://user:password@localhost:5432/orvox_db?schema=public"
+JWT_SECRET="your-super-secret-jwt-key"
+JWT_EXPIRES_IN="7d"
+PORT=3001
+NODE_ENV=development
+```
+
+### Frontend (.env.local)
+```
+NEXT_PUBLIC_API_URL=http://localhost:3001
+```
+
+## Database Schema
+
+The database includes models for:
+- Admin users
+- Team groups and members
+- Projects (with member relationships)
+- Services
+- Pricing plans
+- Stats
+- Testimonials
+- About content
+- Contact messages (for future use)
+- Chat messages (for future use)
+- Contracts (for future use)
+
+## Development
+
+### Backend
+```bash
+cd backend
+npm run start:dev    # Development with hot reload
+npm run build        # Build for production
+npm run start:prod   # Run production build
+```
+
+### Frontend
+```bash
+npm run dev          # Development server
+npm run build        # Production build
+npm run start        # Production server
+```
+
+## Deployment
+
+1. Set up PostgreSQL database on your hosting provider
+2. Update environment variables
+3. Build and deploy backend
+4. Build and deploy frontend
+5. Ensure uploads directory is writable
+
+## Security Notes
+
+- Change default admin credentials immediately
+- Use strong JWT_SECRET in production
+- Enable HTTPS in production
+- Configure CORS properly for production
+- Set up proper file upload limits
+- Regular database backups
+
+## Future Enhancements
+
+The architecture is designed to support:
+- Real-time chat functionality
+- Contract management system
+- User authentication
+- Payment integration
+- Analytics dashboard
+
+## License
+
+Private - All rights reserved

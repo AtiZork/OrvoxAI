@@ -2,14 +2,41 @@
 
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import NeuralBackground from "./NeuralBackground";
 import AnimatedCounter from "./AnimatedCounter";
 import { ArrowRight, Code2, Users, Rocket } from "lucide-react";
 import Link from "next/link";
+import { api } from "@/lib/api";
 
 export default function Hero() {
     const containerRef = useRef(null);
+    const [stats, setStats] = useState([
+        { label: "Projects Delivered", value: "100", suffix: "+", icon: Users },
+        { label: "Client Funding Raised", value: "35", prefix: "$", suffix: "M+", icon: Rocket },
+        { label: "Years Experience", value: "9", suffix: "+", icon: Code2 },
+    ]);
+
+    useEffect(() => {
+        api.getStats().then((data) => {
+            if (data && data.length > 0) {
+                const iconMap: Record<string, any> = {
+                    Users,
+                    Rocket,
+                    Code2,
+                };
+                setStats(
+                    data.map((stat: any) => ({
+                        label: stat.label,
+                        value: stat.value,
+                        prefix: stat.prefix,
+                        suffix: stat.suffix,
+                        icon: iconMap[stat.icon] || Users,
+                    }))
+                );
+            }
+        });
+    }, []);
 
     useGSAP(() => {
         const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
@@ -80,35 +107,18 @@ export default function Hero() {
 
                 {/* Statistics - Clean and Professional */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-16 max-w-4xl mx-auto px-4 sm:px-0">
-                    <div className="hero-stats bg-zinc-900/20 sm:bg-transparent p-6 sm:p-0 rounded-xl sm:rounded-none">
-                        <div className="flex items-center justify-center gap-2 mb-2">
-                            <Users className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" />
-                            <div className="text-3xl sm:text-4xl font-bold text-white">
-                                <AnimatedCounter value={100} suffix="+" />
+                    {stats.map((stat, index) => (
+                        <div key={index} className="hero-stats bg-zinc-900/20 sm:bg-transparent p-6 sm:p-0 rounded-xl sm:rounded-none">
+                            <div className="flex items-center justify-center gap-2 mb-2">
+                                <stat.icon className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" />
+                                <div className="text-3xl sm:text-4xl font-bold text-white">
+                                    {stat.prefix && <span>{stat.prefix}</span>}
+                                    <AnimatedCounter value={parseInt(stat.value)} suffix={stat.suffix} />
+                                </div>
                             </div>
+                            <p className="text-gray-500 text-xs sm:text-sm">{stat.label}</p>
                         </div>
-                        <p className="text-gray-500 text-xs sm:text-sm">Projects Delivered</p>
-                    </div>
-
-                    <div className="hero-stats bg-zinc-900/20 sm:bg-transparent p-6 sm:p-0 rounded-xl sm:rounded-none">
-                        <div className="flex items-center justify-center gap-2 mb-2">
-                            <Rocket className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
-                            <div className="text-3xl sm:text-4xl font-bold text-white">
-                                <AnimatedCounter value={35} suffix="M+" prefix="$" />
-                            </div>
-                        </div>
-                        <p className="text-gray-500 text-xs sm:text-sm">Client Funding Raised</p>
-                    </div>
-
-                    <div className="hero-stats bg-zinc-900/20 sm:bg-transparent p-6 sm:p-0 rounded-xl sm:rounded-none">
-                        <div className="flex items-center justify-center gap-2 mb-2">
-                            <Code2 className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" />
-                            <div className="text-3xl sm:text-4xl font-bold text-white">
-                                <AnimatedCounter value={9} suffix="+" />
-                            </div>
-                        </div>
-                        <p className="text-gray-500 text-xs sm:text-sm">Years Experience</p>
-                    </div>
+                    ))}
                 </div>
 
                 {/* CTA Buttons - Professional, touch-friendly */}

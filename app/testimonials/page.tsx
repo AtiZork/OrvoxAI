@@ -2,15 +2,32 @@
 
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Quote } from "lucide-react";
+import { api } from "@/lib/api";
 
 export default function TestimonialsPage() {
     const containerRef = useRef(null);
+    const [testimonials, setTestimonials] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        api.getTestimonials()
+            .then((data) => {
+                setTestimonials(data);
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.error('Failed to fetch testimonials:', error);
+                setLoading(false);
+            });
+    }, []);
 
     useGSAP(() => {
+        if (loading || testimonials.length === 0) return;
+
         gsap.from(".testimonial-card", {
             scale: 0.9,
             opacity: 0,
@@ -18,13 +35,7 @@ export default function TestimonialsPage() {
             stagger: 0.2,
             ease: "power2.out"
         });
-    }, { scope: containerRef });
-
-    const testimonials = [
-        { text: "Working with Dev Agency has been absolute game-changer for our company. From the moment we engaged with.", author: "Client Feedback" },
-        { text: "Working with Dev Agency has been absolute game-changer for our company. From the moment we engaged with.", author: "Client Feedback" },
-        { text: "Working with Dev Agency has been absolute game-changer for our company. From the moment we engaged with.", author: "Client Feedback" },
-    ];
+    }, { scope: containerRef, dependencies: [loading, testimonials] });
 
     return (
         <main ref={containerRef} className="bg-black min-h-screen text-white pt-20">
@@ -36,9 +47,22 @@ export default function TestimonialsPage() {
                     See how we've helped businesses transform and grow through technology.
                 </p>
 
+                {loading && (
+                    <div className="text-center py-20">
+                        <div className="text-xl text-gray-400">Loading testimonials...</div>
+                    </div>
+                )}
+
+                {!loading && testimonials.length === 0 && (
+                    <div className="text-center py-20">
+                        <div className="text-xl text-gray-400">No testimonials available yet</div>
+                    </div>
+                )}
+
+                {!loading && testimonials.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {testimonials.map((t, i) => (
-                        <div key={i} className="testimonial-card p-10 rounded-3xl bg-zinc-900/50 border border-zinc-800 text-left relative overflow-hidden group hover:bg-zinc-900 transition-colors">
+                        <div key={t.id || i} className="testimonial-card p-10 rounded-3xl bg-zinc-900/50 border border-zinc-800 text-left relative overflow-hidden group hover:bg-zinc-900 transition-colors">
                             <div className="absolute top-8 right-8 text-zinc-700 group-hover:text-cyan-500/20 transition-colors">
                                 <Quote className="w-12 h-12" />
                             </div>
@@ -46,15 +70,21 @@ export default function TestimonialsPage() {
                             <p className="text-xl md:text-2xl text-gray-200 mb-8 leading-relaxed relative z-10">"{t.text}"</p>
 
                             <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-purple-500" />
+                                {t.image ? (
+                                    <img src={t.image} alt={t.author} className="w-10 h-10 rounded-full object-cover" />
+                                ) : (
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-purple-500" />
+                                )}
                                 <div>
                                     <h4 className="font-bold">{t.author}</h4>
-                                    <span className="text-cyan-400 text-sm">Verified Client</span>
+                                    {t.company && <div className="text-gray-400 text-xs">{t.company}</div>}
+                                    {t.verified && <span className="text-cyan-400 text-sm">Verified Client</span>}
                                 </div>
                             </div>
                         </div>
                     ))}
                 </div>
+                )}
             </section>
 
             <Footer />
