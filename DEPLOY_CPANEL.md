@@ -78,6 +78,30 @@ Static site in `public_html` and API on `api.yourdomain.com`.
 | API | Subdomain + **Setup Node.js App** | NestJS + SQLite |
 | Admin | `https://yourdomain.com/admin/` | Static page → calls API |
 
+## One-command deploy (no typing many commands)
+
+All build steps are in **`package.json`** as:
+
+```bash
+npm run deploy:cpanel
+```
+
+That runs: install → frontend build → backend install/build → database migrate → seed.
+
+### cPanel — Run JS script
+
+1. **Run NPM Install** (first time or after dependency changes)
+2. **Run JS script** → choose **`deploy:cpanel`** → leave parameters empty → Run
+3. **RESTART** the Node app
+
+### Git — automatic on deploy
+
+After you push `.cpanel.yml`, **Deploy HEAD Commit** runs `npm run deploy:cpanel` for you.
+
+> Builds can take several minutes and may **timeout** on small hosting plans. If it fails, run **`build:cpanel:same-domain`** only, then ask support or use SSH when enabled.
+
+---
+
 ## Git pull error: `server.js would be overwritten`
 
 This happens when **`server.js` was created manually on the server** but GitHub also has `server.js` in the repo.

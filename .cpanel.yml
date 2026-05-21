@@ -1,18 +1,9 @@
 ---
-# cPanel Git → Deploy (Pull or Deploy tab)
-# Edit DEST if your Node.js "Application root" is a different folder.
+# After Git pull, run the full build (same as: npm run deploy:cpanel)
+# Edit REPO if your clone path differs.
 deployment:
   tasks:
-    - export DEST=/home2/orvoxaic/public_html/OrvoxAi
-    - /bin/mkdir -p $DEST
-    - /bin/cp -R app $DEST/
-    - /bin/cp -R backend $DEST/
-    - /bin/cp -R components $DEST/
-    - /bin/cp -R deploy $DEST/
-    - /bin/cp -R lib $DEST/
-    - /bin/cp -R public $DEST/
-    - /bin/cp -R scripts $DEST/
-    - /bin/cp package.json package-lock.json server.js next.config.ts tsconfig.json postcss.config.mjs eslint.config.mjs prisma.config.ts $DEST/
-    - /bin/cp -R out $DEST/ 2>/dev/null || /bin/echo "Note: out/ missing — run npm run build:cpanel:same-domain on server"
-    - /bin/mkdir -p $DEST/tmp
-    - /bin/touch $DEST/tmp/restart.txt
+    - export REPO=/home2/orvoxaic/repositories/OrvoxAI
+    - cd $REPO && npm run deploy:cpanel 2>&1 | /bin/tee -a $REPO/deploy.log
+    - /bin/mkdir -p $REPO/tmp
+    - /bin/touch $REPO/tmp/restart.txt

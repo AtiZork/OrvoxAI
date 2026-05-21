@@ -21,7 +21,9 @@
     "seed": "ts-node scripts/seed.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio"
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:studio": "prisma studio",
+    "deploy:cpanel": "npm run prisma:generate && npm run build && npm run prisma:migrate:deploy && npm run seed"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.0",

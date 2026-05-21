@@ -7,6 +7,8 @@
     "build": "next build",
     "build:cpanel": "CPANEL_BUILD=1 next build && node scripts/cpanel-postbuild.js",
     "build:cpanel:same-domain": "NEXT_PUBLIC_API_URL= CPANEL_BUILD=1 next build && node scripts/cpanel-postbuild.js",
+    "deploy:backend": "npm install --prefix backend && npm run deploy:cpanel --prefix backend",
+    "deploy:cpanel": "npm install && npm run build:cpanel:same-domain && npm run deploy:backend",
     "start": "next start",
     "lint": "eslint"
   },
