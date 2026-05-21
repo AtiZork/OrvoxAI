@@ -1,0 +1,4 @@
+# Optional — only if your host uses Apache + Passenger for Node.js apps.
+# Place in the backend application root (same folder as package.json).
+PassengerAppType node
+PassengerStartupFile dist/main.js

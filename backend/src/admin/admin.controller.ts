@@ -2,8 +2,7 @@ import { Controller, Get, UseGuards, Post, UseInterceptors, UploadedFile } from 
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AdminService } from './admin.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { multerImageStorage } from '../common/config/multer-storage';
 
 @Controller('admin')
 export class AdminController {
@@ -30,13 +29,7 @@ export class AdminController {
   @Post('upload/team')
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads/team',
-        filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, `team-${uniqueSuffix}${extname(file.originalname)}`);
-        },
-      }),
+      storage: multerImageStorage('team', 'team'),
     }),
   )
   async uploadTeamImage(@UploadedFile() file: Express.Multer.File) {

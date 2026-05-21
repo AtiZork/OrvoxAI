@@ -11,6 +11,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import NeuralBackground from "@/components/NeuralBackground";
 import { api } from "@/lib/api";
+import { resolveMediaUrl } from "@/lib/media";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -137,7 +138,7 @@ export default function PortfolioPage() {
                                         {/* Image */}
                                         <div className="relative w-full aspect-square mb-6 rounded-2xl overflow-hidden">
                                             <Image
-                                                src={member.image}
+                                                src={resolveMediaUrl(member.image)}
                                                 alt={member.name}
                                                 fill
                                                 className="object-cover group-hover:scale-110 transition-transform duration-700"

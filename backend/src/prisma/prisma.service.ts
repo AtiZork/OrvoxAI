@@ -1,16 +1,14 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { PrismaLibSql } from '@prisma/adapter-libsql';
-import * as Database from 'better-sqlite3';
-import { join } from 'path';
+import { resolveDatabasePath } from '../common/config/paths';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   constructor() {
-    const dbPath = process.env.DATABASE_URL?.replace('file:', '') || '../dev.db';
-    const fullPath = join(__dirname, '../../', dbPath);
+    const fullPath = resolveDatabasePath();
     const adapter = new PrismaLibSql({ url: `file:${fullPath}` });
-    
+
     super({
       adapter,
     });
@@ -24,9 +22,3 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     await this.$disconnect();
   }
 }
-
-
-
-
-
-

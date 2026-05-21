@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 import { Mail, Phone, MapPin, Clock, ArrowRight, Check } from "lucide-react";
 import CircuitBackground from "@/components/CircuitBackground";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.orvoxai.com";
+import { API_URL } from "@/lib/config";
 
 export default function ContactUsPage() {
     const containerRef = useRef(null);

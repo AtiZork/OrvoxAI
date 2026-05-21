@@ -312,7 +312,7 @@ export default function KeyProjectsPage() {
                                                     <div>
                                                         <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Tech Stack</h4>
                                                         <div className="flex flex-wrap gap-2">
-                                                            {project.technologies.map((tech, idx) => (
+                                                            {project.technologies.map((tech: string, idx: number) => (
                                                                 <span 
                                                                     key={idx} 
                                                                     className="px-3 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 text-gray-300 text-sm font-medium hover:border-cyan-500/50 transition-colors"
@@ -335,7 +335,7 @@ export default function KeyProjectsPage() {
 
                                                     <div className="space-y-3 mb-6">
                                                         {project.allMembers && project.allMembers.length > 0 ? (
-                                                            project.allMembers.map((member, idx) => (
+                                                            project.allMembers.map((member: { slug: string; name?: string; role?: string }, idx: number) => (
                                                                 <Link 
                                                                     key={idx}
                                                                     href={`/portfolio/${member.slug}`}

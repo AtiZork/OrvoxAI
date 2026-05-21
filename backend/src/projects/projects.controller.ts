@@ -12,8 +12,7 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { multerImageStorage } from '../common/config/multer-storage';
 import { ProjectsService } from './projects.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { Public } from '../common/decorators/public.decorator';
@@ -57,13 +56,7 @@ export class ProjectsController {
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads/projects',
-        filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, `project-${uniqueSuffix}${extname(file.originalname)}`);
-        },
-      }),
+      storage: multerImageStorage('projects', 'project'),
     }),
   )
   async uploadImage(@UploadedFile() file: Express.Multer.File) {

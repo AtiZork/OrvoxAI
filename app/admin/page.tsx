@@ -24,7 +24,7 @@ import {
   Clock
 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.orvoxai.com";
+import { API_URL } from "@/lib/config";
 
 export default function AdminPanel() {
   const router = useRouter();

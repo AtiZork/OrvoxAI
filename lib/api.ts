@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.orvoxai.com";
+import { API_URL } from "./config";
 
 async function fetchAPI(endpoint: string) {
   try {

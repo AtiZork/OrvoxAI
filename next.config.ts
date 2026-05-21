@@ -1,17 +1,23 @@
 import type { NextConfig } from "next";
 
+/** Set CPANEL_BUILD=1 to produce a static site for public_html (Apache). */
+const isCpanelBuild = process.env.CPANEL_BUILD === "1";
+
 const nextConfig: NextConfig = {
-  // Optimize for production
-  output: 'standalone', // Creates a standalone build for easier deployment
-  images: {
-    unoptimized: false, // Enable image optimization
-    remotePatterns: [], // Add remote image domains if needed
+  turbopack: {
+    root: import.meta.dirname,
   },
-  // Ensure proper static file handling
-  trailingSlash: false,
-  // Production optimizations
+  output: isCpanelBuild ? "export" : "standalone",
+  trailingSlash: isCpanelBuild,
+  images: {
+    unoptimized: isCpanelBuild,
+    remotePatterns: [
+      { protocol: "https", hostname: "**" },
+      { protocol: "http", hostname: "**" },
+    ],
+  },
   compress: true,
-  poweredByHeader: false, // Remove X-Powered-By header for security
+  poweredByHeader: false,
 };
 
 export default nextConfig;

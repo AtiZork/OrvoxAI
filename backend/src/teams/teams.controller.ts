@@ -16,8 +16,7 @@ import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { Public } from '../common/decorators/public.decorator';
 import { CreateTeamGroupDto, UpdateTeamGroupDto } from './dto/team-group.dto';
 import { CreateTeamMemberDto, UpdateTeamMemberDto } from './dto/team-member.dto';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { multerImageStorage } from '../common/config/multer-storage';
 
 @Controller('api/teams')
 export class TeamsController {
@@ -87,13 +86,7 @@ export class TeamsController {
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads/team',
-        filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, `team-${uniqueSuffix}${extname(file.originalname)}`);
-        },
-      }),
+      storage: multerImageStorage('team', 'team'),
     }),
   )
   async uploadImage(@UploadedFile() file: Express.Multer.File) {

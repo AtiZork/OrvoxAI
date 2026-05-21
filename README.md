@@ -176,6 +176,12 @@ npm run start        # Production server
 
 ## Deployment
 
+### cPanel (shared hosting)
+
+See **[DEPLOY_CPANEL.md](./DEPLOY_CPANEL.md)** — static site in `public_html` + NestJS API on a Node.js subdomain.
+
+### VPS / Docker
+
 1. Set up PostgreSQL database on your hosting provider
 2. Update environment variables
 3. Build and deploy backend

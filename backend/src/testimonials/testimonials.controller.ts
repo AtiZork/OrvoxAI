@@ -15,8 +15,7 @@ import { TestimonialsService } from './testimonials.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { Public } from '../common/decorators/public.decorator';
 import { CreateTestimonialDto, UpdateTestimonialDto } from './dto/testimonial.dto';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { multerImageStorage } from '../common/config/multer-storage';
 
 @Controller('api/testimonials')
 export class TestimonialsController {
@@ -56,13 +55,7 @@ export class TestimonialsController {
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads/testimonials',
-        filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, `testimonial-${uniqueSuffix}${extname(file.originalname)}`);
-        },
-      }),
+      storage: multerImageStorage('testimonials', 'testimonial'),
     }),
   )
   async uploadImage(@UploadedFile() file: Express.Multer.File) {
