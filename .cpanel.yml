@@ -4,6 +4,6 @@
 deployment:
   tasks:
     - export REPO=/home2/orvoxaic/repositories/OrvoxAI
-    - cd $REPO && npm run deploy:cpanel 2>&1 | /bin/tee -a $REPO/deploy.log
+    - cd $REPO && npm run deploy:cpanel:server 2>&1 | /bin/tee -a $REPO/deploy.log
     - /bin/mkdir -p $REPO/tmp
     - /bin/touch $REPO/tmp/restart.txt

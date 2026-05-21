@@ -83,16 +83,33 @@ Static site in `public_html` and API on `api.yourdomain.com`.
 All build steps are in **`package.json`** as:
 
 ```bash
-npm run deploy:cpanel
+npm run deploy:cpanel          # backend only on server (recommended)
+npm run deploy:cpanel:full     # frontend + backend (needs lots of RAM)
 ```
 
-That runs: install → frontend build → backend install/build → database migrate → seed.
+On **shared cPanel**, `next build` often fails with **Out of memory / WebAssembly** — build the frontend on your laptop (see below).
 
 ### cPanel — Run JS script
 
 1. **Run NPM Install** (first time or after dependency changes)
-2. **Run JS script** → choose **`deploy:cpanel`** → leave parameters empty → Run
-3. **RESTART** the Node app
+2. **Run JS script** → choose **`deploy:cpanel`** (backend only) → Run
+3. Upload **`out/`** from your laptop if not built on server (see below)
+4. **RESTART** the Node app
+
+### Out of memory during `build:cpanel` on server
+
+Your host limits RAM. **Do not build Next.js on cPanel.**
+
+**On your laptop** (in the project folder):
+
+```bash
+npm install
+npm run build:cpanel:same-domain
+```
+
+**Upload** the entire **`out/`** folder to `/home2/orvoxaic/repositories/OrvoxAI/out/` via File Manager (merge/overwrite).
+
+Then on cPanel only run **`deploy:cpanel`** (backend). Optional: try **`build:cpanel:same-domain`** again after we added `--webpack` (uses less memory than Turbopack) — may still fail on small plans.
 
 ### Git — automatic on deploy
 
