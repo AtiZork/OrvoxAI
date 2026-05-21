@@ -19,7 +19,7 @@ Everything runs on **`orvoxai.com`** via one Node.js app and root **`server.js`*
 |-------|--------|
 | Node.js version | **20** (or 18+) |
 | Application mode | **Production** |
-| Application root | `/home2/orvoxaic/repositories/OrvoxAI` |
+| Application root | `/home2/orvoxaic/public_html/OrvoxAi` **or** `repositories/OrvoxAI` (must match Git/deploy path) |
 | Application URL | **`orvoxai.com`** |
 | Application startup file | **`server.js`** |
 
@@ -77,6 +77,44 @@ Static site in `public_html` and API on `api.yourdomain.com`.
 | Website | `public_html` | Static export from Next.js (`out/`) |
 | API | Subdomain + **Setup Node.js App** | NestJS + SQLite |
 | Admin | `https://yourdomain.com/admin/` | Static page → calls API |
+
+## Git pull error: `server.js would be overwritten`
+
+This happens when **`server.js` was created manually on the server** but GitHub also has `server.js` in the repo.
+
+**Fix (SSH or Terminal in cPanel):**
+
+```bash
+cd /home2/orvoxaic/repositories/OrvoxAI
+rm -f server.js
+git pull origin main
+```
+
+Then in cPanel → **Git Version Control** → **Pull or Deploy** → **Update from Remote**.
+
+`server.js` will come from Git (correct version). Do **not** upload `server.js` by hand again.
+
+---
+
+## Git deploy: missing `.cpanel.yml`
+
+cPanel **Deploy** requires a `.cpanel.yml` file in the repo root (now included).
+
+1. Push latest code from your PC: `git push origin main`
+2. **Pull** on server (see above)
+3. **Pull or Deploy** tab → **Deploy HEAD Commit**
+
+Edit `.cpanel.yml` if your Node **Application root** is not `public_html/OrvoxAi` — change the `DEST=` path to match cPanel exactly.
+
+If Node runs directly from the repo (no copy), set:
+
+```yaml
+deployment:
+  tasks:
+    - /bin/echo "Pull complete — click RESTART in Setup Node.js App"
+```
+
+---
 
 ## Prerequisites
 
