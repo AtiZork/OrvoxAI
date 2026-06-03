@@ -23,7 +23,8 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
-    "deploy:cpanel": "npm install --include=dev --prefix . && npm run prisma:generate && npm run build && npm run prisma:migrate:deploy && npm run seed"
+    "deploy:cpanel": "npm run prisma:generate && npm run build && npm run prisma:migrate:deploy && npm run seed",
+    "deploy:install": "npm install --include=dev --legacy-peer-deps --no-workspaces",
   },
   "dependencies": {
     "@nestjs/common": "^11.1.11",
