@@ -66,7 +66,7 @@ function ensureBackendDeps(modulesPath) {
   if (missing.length === 0) return;
 
   console.log(`Missing packages: ${missing.join(', ')}`);
-  run('npm install --include=dev --legacy-peer-deps --ignore-scripts', backendRoot);
+  run('npm install --include=dev --legacy-peer-deps --ignore-scripts -C . .', backendRoot);
 
   missing = missingPackages(modulesPath);
   if (missing.length === 0) return;
@@ -83,7 +83,7 @@ if (!process.env.VIRTUAL_ENV) {
   console.warn('Warning: VIRTUAL_ENV not set. Run: source ~/nodevenv/repositories/OrvoxAI/20/bin/activate');
 }
 
-run('npm install --include=dev --legacy-peer-deps --ignore-scripts', backendRoot);
+run('npm install --include=dev --legacy-peer-deps --ignore-scripts -C . .', backendRoot);
 
 const modulesPath = resolveModulesPath();
 ensureBackendDeps(modulesPath);
@@ -115,6 +115,6 @@ if (process.env.SKIP_BUILD === '1') {
 }
 
 run('npx prisma migrate deploy');
-run('npx --yes ts-node scripts/seed.ts');
+run('node scripts/seed.mjs');
 
 console.log('\n✅ Backend deploy complete. RESTART the Node app in cPanel.');
