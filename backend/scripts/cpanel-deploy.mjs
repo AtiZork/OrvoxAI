@@ -93,15 +93,25 @@ process.env.NODE_PATH = modulesPath;
 
 run('npx prisma generate');
 
-const distMain = join(backendRoot, 'dist/main.js');
-if (process.env.SKIP_BUILD === '1') {
-  if (!existsSync(distMain)) {
-    console.error('SKIP_BUILD=1 but dist/main.js not found — upload backend/dist/ first');
-    process.exit(1);
+function ensureDistEntry() {
+  const distMain = join(backendRoot, 'dist/main.js');
+  const distSrcMain = join(backendRoot, 'dist/src/main.js');
+  if (existsSync(distMain)) return;
+  if (existsSync(distSrcMain)) {
+    symlinkSync(distSrcMain, distMain);
+    console.log(`Linked dist/main.js -> dist/src/main.js`);
+    return;
   }
+  console.error('dist/main.js not found — upload backend/dist/ or run build first');
+  process.exit(1);
+}
+
+if (process.env.SKIP_BUILD === '1') {
   console.log('Skipping Nest build (SKIP_BUILD=1)');
+  ensureDistEntry();
 } else {
   run('npx --yes @nestjs/cli build');
+  ensureDistEntry();
 }
 
 run('npx prisma migrate deploy');
