@@ -22,7 +22,8 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
-    "deploy:cpanel": "node scripts/cpanel-deploy.mjs"
+    "deploy:cpanel": "node scripts/cpanel-deploy.mjs",
+    "deploy:cpanel:runtime": "SKIP_BUILD=1 node scripts/cpanel-deploy.mjs"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.11",
