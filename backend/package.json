@@ -26,11 +26,11 @@
     "deploy:cpanel": "npm run prisma:generate && npm run build && npm run prisma:migrate:deploy && npm run seed"
   },
   "dependencies": {
-    "@nestjs/common": "^10.3.0",
-    "@nestjs/config": "^3.1.1",
+    "@nestjs/common": "^11.1.11",
+    "@nestjs/config": "^4.0.0",
     "@nestjs/core": "^11.1.11",
-    "@nestjs/jwt": "^10.2.0",
-    "@nestjs/passport": "^10.0.3",
+    "@nestjs/jwt": "^11.0.0",
+    "@nestjs/passport": "^11.0.0",
     "@nestjs/platform-express": "^11.1.11",
     "@prisma/adapter-libsql": "^7.2.0",
     "@prisma/client": "^7.2.0",
@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.14",
-    "@nestjs/schematics": "^10.1.0",
+    "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.1.11",
     "@types/bcryptjs": "^2.4.6",
     "@types/express": "^4.17.21",
