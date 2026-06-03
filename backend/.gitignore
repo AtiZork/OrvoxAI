@@ -43,6 +43,11 @@ lerna-debug.log*
 /uploads
 !/uploads/.gitkeep
 
+# Database (production path is outside repo on cPanel)
+/data/*.db
+!/data/.gitkeep
+/dev.db
+
 
 
 

@@ -4,7 +4,7 @@
   "description": "Backend API for Orvox AI",
   "main": "dist/main.js",
   "scripts": {
-    "build": "npx nest build",
+    "build": "npx --yes @nestjs/cli build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -18,12 +18,12 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "seed": "ts-node scripts/seed.ts",
+    "seed": "npx --yes ts-node scripts/seed.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
-    "deploy:cpanel": "npm install --include=dev && npm run prisma:generate && npm run build && npm run prisma:migrate:deploy && npm run seed"
+    "deploy:cpanel": "npm install --include=dev --prefix . && npm run prisma:generate && npm run build && npm run prisma:migrate:deploy && npm run seed"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.11",
