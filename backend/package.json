@@ -4,7 +4,7 @@
   "description": "Backend API for Orvox AI",
   "main": "dist/main.js",
   "scripts": {
-    "build": "nest build",
+    "build": "npx nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -23,7 +23,7 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
-    "deploy:cpanel": "npm run prisma:generate && npm run build && npm run prisma:migrate:deploy && npm run seed"
+    "deploy:cpanel": "npm install --include=dev && npm run prisma:generate && npm run build && npm run prisma:migrate:deploy && npm run seed"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.11",
